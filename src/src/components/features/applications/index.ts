@@ -1,0 +1,10 @@
+// Barrel export for application components
+export { ApplicationsTable } from './ApplicationsTable';
+export { ApplicationsTableSimple } from './ApplicationsTableSimple';
+export { ApplicationsTableVibrant } from './ApplicationsTableVibrant';
+export { ApplicationDetailsDialog } from './ApplicationDetailsDialog';
+export { ApplicationViewModal } from './ApplicationViewModal';
+export { RegisterApplicationModal } from './RegisterApplicationModal';
+export { EditApplicationModal } from './EditApplicationModal';
+export { AllocateApplicationModal } from './AllocateApplicationModal';
+export { ApplicationSubmitSuccessDialog } from './ApplicationSubmitSuccessDialog';
