@@ -2,7 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
-import { LayoutDashboard, CheckCircle, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
+import {
+  LayoutDashboard,
+  CheckCircle,
+  ChevronLeft,
+  ChevronRight,
+  Sparkles,
+} from 'lucide-react';
 
 interface SidebarProps {
   activeTab: string;
@@ -14,12 +20,29 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
   const [isMobile, setIsMobile] = useState(false);
   const prefersReducedMotion = useReducedMotion();
 
+  // ✅ External redirect mapping
+  const EXTERNAL_REDIRECTS: Record<string, string> = {
+    'add-reading': 'https://add-reading.vercel.app/',
+    'approval reading': 'https://add-reading-vjqz.vercel.app/',
+    'cancel collection': 'https://approve-reading.vercel.app/',
+    'CFC payment': 'https://cfc-water-bill-21fm.vercel.app/',
+    'Reports Dashboard': 'https://report-dashboard-psi.vercel.app/',
+  };
+
+  // ✅ Default to CRM on initial load if activeTab is empty
+  useEffect(() => {
+    if (!activeTab) {
+      onTabChange('crm');
+    }
+    // intentionally only depends on activeTab/onTabChange
+  }, [activeTab, onTabChange]);
+
   // Check if mobile on client side only
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.matchMedia('(max-width: 1024px)').matches);
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -40,13 +63,65 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
       gradient: 'from-emerald-500 via-teal-500 to-cyan-600',
       shadowColor: 'shadow-emerald-500/50',
     },
+    {
+      id: 'add-reading',
+      label: 'Add Reading',
+      icon: CheckCircle,
+      gradient: 'from-blue-500 via-blue-600 to-indigo-600',
+      shadowColor: 'shadow-blue-500/50',
+    },
+    {
+      id: 'approval reading',
+      label: 'Approve Reading',
+      icon: CheckCircle,
+      gradient: 'from-emerald-500 via-teal-500 to-cyan-600',
+      shadowColor: 'shadow-emerald-500/50',
+    },
+    {
+      id: 'cancel collection',
+      label: 'Cancel Collection',
+      icon: CheckCircle,
+      gradient: 'from-blue-500 via-blue-600 to-indigo-600',
+      shadowColor: 'shadow-emerald-500/50',
+    },
+    {
+      id: 'CFC payment',
+      label: 'CFC Payment',
+      icon: CheckCircle,
+      gradient: 'from-emerald-500 via-teal-500 to-cyan-600',
+      shadowColor: 'shadow-emerald-500/50',
+    },
+    {
+      id: 'Reports Dashboard',
+      label: 'Reports Dashboard',
+      icon: CheckCircle,
+      gradient: 'from-blue-500 via-blue-600 to-indigo-600',
+      shadowColor: 'shadow-emerald-500/50',
+    },
   ];
+
+  const handleMenuClick = (tabId: string) => {
+    const redirectUrl = EXTERNAL_REDIRECTS[tabId];
+
+    // ✅ Redirect external items
+    if (redirectUrl) {
+      window.location.assign(redirectUrl);
+      return;
+    }
+
+    // ✅ Normal internal tab change
+    onTabChange(tabId);
+  };
 
   return (
     <motion.div
       initial={{ width: 260 }}
       animate={{ width: isCollapsed ? 80 : 260 }}
-      transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.3, ease: 'easeInOut' }}
+      transition={
+        prefersReducedMotion
+          ? { duration: 0 }
+          : { duration: 0.3, ease: 'easeInOut' }
+      }
       className="relative h-full bg-gradient-to-b from-white via-blue-50/30 to-purple-50/30 backdrop-blur-xl border-r-4 border-white shadow-2xl overflow-hidden flex-shrink-0"
       onMouseEnter={() => !isMobile && setIsCollapsed(false)}
       onMouseLeave={() => !isMobile && setIsCollapsed(true)}
@@ -54,9 +129,15 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
       aria-label="Main navigation"
     >
       {/* Background decorative elements */}
-      <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl" aria-hidden="true" />
-      <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-br from-orange-300/20 to-pink-300/20 rounded-full blur-3xl" aria-hidden="true" />
-      
+      <div
+        className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-br from-orange-300/20 to-pink-300/20 rounded-full blur-3xl"
+        aria-hidden="true"
+      />
+
       {/* Animated glow */}
       <motion.div
         animate={{
@@ -78,19 +159,14 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
           animate={{ justifyContent: isCollapsed ? 'center' : 'flex-start' }}
         >
           <motion.div
-            animate={{
-              rotate: [0, 5, -5, 0],
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
+            animate={{ rotate: [0, 5, -5, 0] }}
+            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
             className="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 via-orange-600 to-red-600 flex items-center justify-center shadow-2xl border-3 border-white ring-4 ring-orange-400/30"
           >
             <Sparkles className="w-6 h-6 text-white drop-shadow-lg" />
             <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-2xl" />
           </motion.div>
+
           <AnimatePresence>
             {!isCollapsed && (
               <motion.div
@@ -99,7 +175,10 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
                 exit={{ opacity: 0, x: -10 }}
                 transition={{ duration: 0.2 }}
               >
-                <div className="text-sm text-slate-900 drop-shadow-sm" style={{ fontWeight: 900, letterSpacing: '-0.02em' }}>
+                <div
+                  className="text-sm text-slate-900 drop-shadow-sm"
+                  style={{ fontWeight: 900, letterSpacing: '-0.02em' }}
+                >
                   Municipal Portal
                 </div>
                 <div className="text-xs text-slate-600" style={{ fontWeight: 600 }}>
@@ -125,21 +204,22 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
               transition={{ delay: index * 0.1 }}
             >
               <motion.button
-                onClick={() => onTabChange(item.id)}
+                onClick={() => handleMenuClick(item.id)}
                 whileHover={prefersReducedMotion ? {} : { scale: 1.03, x: 6 }}
                 whileTap={prefersReducedMotion ? {} : { scale: 0.97 }}
                 className={`
                   relative w-full flex items-center gap-3 px-4 py-4 rounded-2xl transition-all duration-300 overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
-                  ${isActive 
-                    ? `bg-gradient-to-r ${item.gradient} text-white shadow-2xl ${item.shadowColor} border-3 border-white ring-4 ring-black/10` 
-                    : 'bg-white/70 text-slate-700 hover:bg-white hover:shadow-xl border-3 border-white/80 shadow-lg'
+                  ${
+                    isActive
+                      ? `bg-gradient-to-r ${item.gradient} text-white shadow-2xl ${item.shadowColor} border-3 border-white ring-4 ring-black/10`
+                      : 'bg-white/70 text-slate-700 hover:bg-white hover:shadow-xl border-3 border-white/80 shadow-lg'
                   }
                 `}
                 style={{ fontWeight: isActive ? 900 : 700 }}
                 aria-label={item.label}
                 aria-current={isActive ? 'page' : undefined}
               >
-                {/* Animated background for active state */}
+                {/* Active animated background */}
                 {isActive && (
                   <motion.div
                     animate={{
@@ -155,29 +235,22 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
                   />
                 )}
 
-                <div className={`
-                  relative w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all
-                  ${isActive 
-                    ? 'bg-white/30 backdrop-blur-sm shadow-xl' 
-                    : `bg-gradient-to-br ${item.gradient} shadow-lg`
-                  }
-                `}>
-                  <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-white'} drop-shadow-lg relative z-10`} />
+                <div
+                  className={`
+                    relative w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all
+                    ${isActive ? 'bg-white/30 backdrop-blur-sm shadow-xl' : `bg-gradient-to-br ${item.gradient} shadow-lg`}
+                  `}
+                >
+                  <Icon className="w-5 h-5 text-white drop-shadow-lg relative z-10" />
                   {isActive && (
                     <motion.div
-                      animate={{
-                        rotate: 360,
-                      }}
-                      transition={{
-                        duration: 20,
-                        repeat: Infinity,
-                        ease: 'linear',
-                      }}
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
                       className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent rounded-xl"
                     />
                   )}
                 </div>
-                
+
                 <AnimatePresence>
                   {!isCollapsed && (
                     <motion.span
@@ -192,7 +265,6 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
                   )}
                 </AnimatePresence>
 
-                {/* Active indicator */}
                 {isActive && (
                   <motion.div
                     layoutId="activeIndicator"
@@ -201,11 +273,11 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
                   />
                 )}
 
-                {/* Shine effect on hover */}
                 <motion.div
                   className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity"
                   style={{
-                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+                    background:
+                      'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
                   }}
                 />
               </motion.button>
@@ -213,25 +285,6 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
           );
         })}
       </div>
-
-      {/* Bottom Info Section */}
-      <AnimatePresence>
-        {!isCollapsed && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            className="absolute bottom-20 left-3 right-3 p-4 rounded-2xl bg-gradient-to-br from-orange-500 via-orange-600 to-red-600 text-white shadow-2xl border-3 border-white ring-4 ring-orange-400/30"
-          >
-            <div className="text-xs mb-1" style={{ fontWeight: 800 }}>
-              🇮🇳 Government of India
-            </div>
-            <div className="text-xs opacity-90" style={{ fontWeight: 600 }}>
-              Digital India Initiative
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Collapse Toggle Button */}
       <motion.button
