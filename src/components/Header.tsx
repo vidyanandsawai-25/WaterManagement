@@ -61,7 +61,7 @@ export function Header({ onNewApplication, applications, onMenuClick }: HeaderPr
                 className="text-sm md:text-xl m-0 drop-shadow-lg" 
                 style={{ fontWeight: 800, letterSpacing: '-0.02em' }}
               >
-                <span className="hidden sm:inline">WaterBill Management</span>
+                <span className="hidden sm:inline">Panvel Municipal Corporation</span>
                 <span className="sm:hidden">Smart Water Management</span>
               </motion.h1>
               <motion.p 
